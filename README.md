@@ -1,5 +1,7 @@
 # LumiStoreKit
 
+📖 English | [中文版](README_zh.md)
+
 StoreKit 2 lifecycle utilities for Coffic Lab apps.
 
 `LumiStoreKit` is the **business-agnostic tool layer** for in-app purchases. It follows the same
