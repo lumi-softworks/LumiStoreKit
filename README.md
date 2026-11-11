@@ -1,13 +1,15 @@
 # LumiStoreKit
 
-StoreKit 2 lifecycle utilities for Coffic Lab apps.
+📖 English | [中文版](README_zh.md)
+
+StoreKit 2 lifecycle utilities for Lumi family apps.
 
 `LumiStoreKit` is the **business-agnostic tool layer** for in-app purchases. It follows the same
-layering discipline as the rest of the Coffic Lab packages:
+layering discipline as the rest of the Lumi Softworks packages:
 
 | Layer | Package | Knows about |
 | --- | --- | --- |
-| Contract | `ProviderStore` (in [LumiProviders](https://github.com/CofficLab/LumiProviders)) | Subscription tiers, entitlement snapshots, capability protocols |
+| Contract | `ProviderStore` (in [LumiProviders](https://github.com/lumi-softworks/LumiProviders)) | Subscription tiers, entitlement snapshots, capability protocols |
 | Tool | `KitStoreKit` (this package) | StoreKit mechanics only |
 | Feature | Each app's `PluginStore` | Product catalog, purchase UI, settings pages |
 
