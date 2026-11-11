@@ -9,7 +9,7 @@ layering discipline as the rest of the Coffic Lab packages:
 
 | Layer | Package | Knows about |
 | --- | --- | --- |
-| Contract | `ProviderStore` (in [LumiProviders](https://github.com/CofficLab/LumiProviders)) | Subscription tiers, entitlement snapshots, capability protocols |
+| Contract | `ProviderStore` (in [LumiProviders](https://github.com/lumi-softworks/LumiProviders)) | Subscription tiers, entitlement snapshots, capability protocols |
 | Tool | `KitStoreKit` (this package) | StoreKit mechanics only |
 | Feature | Each app's `PluginStore` | Product catalog, purchase UI, settings pages |
 

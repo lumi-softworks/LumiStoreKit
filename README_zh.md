@@ -9,7 +9,7 @@ Coffic Lab 应用的 StoreKit 2 生命周期工具集。
 
 | 层 | 包 | 知晓范围 |
 | --- | --- | --- |
-| 契约 | `ProviderStore`（位于 [LumiProviders](https://github.com/CofficLab/LumiProviders)） | 订阅层级、权益快照、能力协议 |
+| 契约 | `ProviderStore`（位于 [LumiProviders](https://github.com/lumi-softworks/LumiProviders)） | 订阅层级、权益快照、能力协议 |
 | 工具 | `KitStoreKit`（本包） | 仅 StoreKit 机制 |
 | 功能 | 各应用的 `PluginStore` | 产品目录、购买界面、设置页面 |
 

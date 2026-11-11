@@ -20,7 +20,7 @@ let package = Package(
         .library(name: "KitStoreKit", targets: ["KitStoreKit"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/CofficLab/LumiLogging.git", from: "1.0.1"),
+        .package(url: "https://github.com/lumi-softworks/LumiLogging.git", from: "1.0.1"),
     ],
     targets: [
         .target(
