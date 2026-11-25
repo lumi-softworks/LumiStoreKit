@@ -2,6 +2,9 @@ import Foundation
 import LumiLoggingKit
 import StoreKit
 import os
+#if os(visionOS)
+import UIKit
+#endif
 
 // MARK: - Store Error
 
@@ -13,6 +16,8 @@ public enum StoreKitError: Error, LocalizedError, Sendable {
     case canNotGetProducts
     /// 商品不存在（按 ID 请求时）。
     case productNotFound(String)
+    /// 没有可用于呈现购买确认的前台场景（仅 visionOS：购买必须绑定 `UIWindowScene`）。
+    case noActiveScene
 
     public var errorDescription: String? {
         switch self {
@@ -22,6 +27,8 @@ public enum StoreKitError: Error, LocalizedError, Sendable {
             return "Could not load products from the App Store"
         case let .productNotFound(productID):
             return "Product not found in the App Store: \(productID)"
+        case .noActiveScene:
+            return "No active scene is available to confirm the purchase"
         }
     }
 }
@@ -107,6 +114,27 @@ public extension StoreKitProductType {
 ///
 /// 服务本身是 `actor`：StoreKit 的异步序列与商品请求天然适合 actor 隔离。
 /// 需要主线程的回调通过参数传入的 `@MainActor` 闭包完成。
+#if os(visionOS)
+/// 在当前的前台 scene 中发起购买。
+///
+/// visionOS 只暴露 `purchase(confirmIn:)`：确认面板必须绑定 `UIWindowScene`，
+/// 而 scene 只能取用于主 actor，所以取商品、找 scene、下单全在这一个隔离域里完成。
+@MainActor
+private func purchaseInActiveScene(productID: String) async throws -> Product.PurchaseResult {
+    let products = try await Product.products(for: [productID])
+    guard let product = products.first else {
+        throw StoreKitError.productNotFound(productID)
+    }
+
+    let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+    guard let scene = scenes.first(where: { $0.activationState == .foregroundActive }) ?? scenes.first else {
+        throw StoreKitError.noActiveScene
+    }
+
+    return try await product.purchase(confirmIn: scene)
+}
+#endif
+
 public actor StoreKitService {
 
     // MARK: - Configuration
@@ -242,12 +270,19 @@ public actor StoreKitService {
     /// - Returns: 购买成功返回交易凭据摘要；用户取消或待处理返回 `nil`。
     @discardableResult
     public func purchase(productID: String) async throws -> StoreKitTransactionSummary? {
+        let result: Product.PurchaseResult
+#if os(visionOS)
+        // visionOS 上 `purchase(options:)` 不可用：确认面板必须绑定一个前台 scene。
+        // 因此整次购买在主 actor 上发起，只传商品 ID，避免把 `Product` 跨隔离传递。
+        result = try await purchaseInActiveScene(productID: productID)
+#else
         let products = try await Product.products(for: [productID])
         guard let product = products.first else {
             throw StoreKitError.productNotFound(productID)
         }
 
-        let result = try await product.purchase()
+        result = try await product.purchase()
+#endif
 
         switch result {
         case let .success(verification):
